@@ -1,0 +1,2 @@
+- validate with type_hints -> check types of objects inside list
+- support Optional[str] and Union types
