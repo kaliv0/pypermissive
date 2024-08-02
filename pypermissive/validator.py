@@ -12,19 +12,39 @@ class BaseModel:
 
             actual_type = type(value)
             expected_type = valid_attr_types[key]
-            if actual_type is not expected_type:
-                # compare against type hints
-                if actual_type is not typing.get_origin(expected_type):
-                    # str == str|None
-                    if typing.get_origin(expected_type) is types.UnionType:
-                        if actual_type not in typing.get_args(expected_type):
-                            raise ValueError(
-                                f"invalid type: '{actual_type.__name__}' not in ({expected_type})"
-                            )
+            # primitive types
+            if actual_type is expected_type:
+                setattr(self, key, value)
+                continue
 
-                    else:
-                        # TODO: move error
-                        raise ValueError(
-                            f"invalid type: '{actual_type.__name__}', expected: '{expected_type.__name__}'"
-                        )
-            setattr(self, key, value)
+            expected_type_args = typing.get_args(expected_type)
+            expected_type_origin = typing.get_origin(expected_type)
+            # compare against type hints
+            if actual_type is expected_type_origin:
+                # validate dict[str, str]
+                if actual_type is dict:
+                    if tuple(type(v) for v in value) == expected_type_args:
+                        setattr(self, key, value)
+                        continue
+                # validate other collections
+                if all([type(v) is expected_type_args[0] for v in value]):
+                    setattr(self, key, value)
+                    continue
+                else:
+                    raise ValueError(
+                        f"invalid value type: expected only '{expected_type_args[0].__name__}'"
+                    )
+
+            # union types
+            if expected_type_origin is types.UnionType:
+                if actual_type in expected_type_args:
+                    setattr(self, key, value)
+                    continue
+
+                union_message = " | ".join([arg.__name__ for arg in expected_type_args])
+                raise ValueError(f"invalid type: '{actual_type.__name__}' not in ({union_message})")
+
+            # TODO: move error
+            raise ValueError(
+                f"invalid type: '{actual_type.__name__}', expected: '{expected_type.__name__}'"
+            )
