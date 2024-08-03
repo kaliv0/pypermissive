@@ -31,9 +31,7 @@ class BaseModel:
                     setattr(self, key, value)
                     continue
                 else:
-                    raise ValueError(
-                        f"invalid value type: expected only '{expected_type_args[0].__name__}'"
-                    )
+                    raise ValueError(f"invalid value type: expected '{expected_type}'")
 
             # union types
             if expected_type_origin is types.UnionType:

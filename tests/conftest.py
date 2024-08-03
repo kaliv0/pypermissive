@@ -23,6 +23,21 @@ class Boy(BaseModel):
     hobbies: List[str] = []
 
 
+class Education(BaseModel):
+    name: str
+    field: str
+    institution: str
+
+
+class Skill(BaseModel):
+    name: str
+
+
+class Worker(BaseModel):
+    education: Education
+    skill: Skill | str
+
+
 # class Person(BaseModel):
 #     name: str
 #     # age: Optional[int]

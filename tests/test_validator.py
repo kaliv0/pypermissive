@@ -1,6 +1,16 @@
 import pytest
 
-from tests.conftest import Department, Employee, Book, Monograph, Boy, TonalMode
+from tests.conftest import (
+    Department,
+    Employee,
+    Book,
+    Monograph,
+    Boy,
+    TonalMode,
+    Worker,
+    Skill,
+    Education,
+)
 
 
 def test_basic_validation():
@@ -76,7 +86,7 @@ def test_invalid_type_hints_type():
 def test_invalid_type_hints_value_types():
     with pytest.raises(ValueError) as e:
         TonalMode(degrees=("I", "II", "III", "V", "VI"))
-    assert str(e.value) == "invalid value type: expected only 'int'"
+    assert str(e.value) == "invalid value type: expected 'tuple[int]'"
 
 
 # ### union types ###
@@ -106,3 +116,31 @@ def test_invalid_union_types():
 #     person = Person(name="John Doe")
 #     assert person.name == "John Doe"
 #     assert person.age is None
+
+
+# ### nested classes ###
+def test_nested_classes():
+    worker = Worker(
+        skill=Skill(name="Data Science"),
+        education=Education(name="PhD", field="AI", institution="MIT"),
+    )
+    assert worker.skill.name == "Data Science"
+    assert worker.education.name == "PhD"
+    assert worker.education.field == "AI"
+    assert worker.education.institution == "MIT"
+
+
+def test_nested_classes_union_type():
+    worker = Worker(
+        skill="Data Science", education=Education(name="PhD", field="AI", institution="MIT")
+    )
+    assert worker.skill == "Data Science"
+    assert worker.education.name == "PhD"
+    assert worker.education.field == "AI"
+    assert worker.education.institution == "MIT"
+
+
+def test_nested_classes_invalid_type():
+    with pytest.raises(ValueError) as e:
+        Worker(skill="Data Science", education=42)
+    assert str(e.value) == "invalid type: 'int', expected: 'Education'"
