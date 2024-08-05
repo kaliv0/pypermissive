@@ -2,7 +2,8 @@ from enum import Enum
 from typing import List
 
 # from pydantic import BaseModel
-from pypermissive.validator import BaseModel
+from pypermissive.base_model import BaseModel
+from pypermissive.field import Field
 
 
 class Department(Enum):
@@ -54,3 +55,8 @@ class Monograph(BaseModel):
 
 class TonalMode(BaseModel):
     degrees: tuple[int]
+
+
+#########################
+class Child(BaseModel):
+    name: Field(value_type=str)

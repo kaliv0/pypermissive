@@ -2,6 +2,8 @@
 import types
 import typing
 
+from pypermissive.field import Field
+
 
 class BaseModel:
     def __init__(self, **kwargs):
@@ -41,6 +43,15 @@ class BaseModel:
 
                 union_message = " | ".join([arg.__name__ for arg in expected_type_args])
                 raise ValueError(f"invalid type: '{actual_type.__name__}' not in ({union_message})")
+
+            if type(valid_attr_types.get(key, None)) is Field:
+                if expected_type.value_type:
+                    # TODO: refactor and replace asserts
+                    if type(value) is expected_type.value_type:
+                        setattr(self, key, value)
+                        continue
+
+                raise ValueError(f"invalid field: expected '{expected_type}'")
 
             # TODO: move error
             raise ValueError(

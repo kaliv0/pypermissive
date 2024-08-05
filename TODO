@@ -6,3 +6,17 @@
 - email?
 - regex validation for strings
 - passing user-defined function for validating particular field
+
+---------------------------
+
+fields:
+- default (value)?
+- gt, lt, ge, le,
+- allow_inf_nan (bool -> allow (-)INF or None)?
+- min/max_length
+- (regex) pattern
+- max_digits, decimal_places (for float)???
+- kw_only, init (bool -> include var in __init__)
+- frozen=True -> make var const -> block __setattr
+- @computed_field -> @LazyProperty
+- default_factory -> e.g. UUID
