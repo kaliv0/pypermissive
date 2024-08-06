@@ -45,13 +45,19 @@ class BaseModel:
                 raise ValueError(f"invalid type: '{actual_type.__name__}' not in ({union_message})")
 
             if type(valid_attr_types.get(key, None)) is Field:
-                if expected_type.value_type:
-                    # TODO: refactor and replace asserts
-                    if type(value) is expected_type.value_type:
-                        setattr(self, key, value)
-                        continue
+                if expected_type.type is None:
+                    raise ValueError("missing value type'")
 
-                raise ValueError(f"invalid field: expected '{expected_type}'")
+                if type(value) is not expected_type.type:
+                    raise ValueError(
+                        f"invalid value type for '{key}', expected: '{expected_type.type}'"
+                    )
+
+                if expected_type.gt and not (value > expected_type.gt):
+                    raise ValueError(f"invalid value: expected '{value}'>'{expected_type.gt}'")
+
+                setattr(self, key, value)
+                continue
 
             # TODO: move error
             raise ValueError(

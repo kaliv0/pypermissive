@@ -21,7 +21,7 @@ class Employee(BaseModel):
 
 
 class Boy(BaseModel):
-    hobbies: List[str] = []
+    hobbies: List[str] = ["Football"]
 
 
 class Education(BaseModel):
@@ -58,5 +58,9 @@ class TonalMode(BaseModel):
 
 
 #########################
-class Child(BaseModel):
-    name: Field(value_type=str)
+class Teenager(BaseModel):
+    name: Field(
+        type=str,
+    ) = "Jimmie"  # TODO: refactor
+
+    age: Field(type=int, gt=9)

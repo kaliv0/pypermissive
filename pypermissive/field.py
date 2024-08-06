@@ -1,11 +1,12 @@
+import typing
 from dataclasses import dataclass
 
 
-@dataclass(frozen=True)  # ???
+@dataclass(frozen=True)  # or simple class with __slots__?
 class Field:
-    value_type: type = None
-    # default: value_type = None
-    # gt: float | int = None
+    type: typing.Any = None  # rename to value_type
+    # default: typing.Any = None  # TODO: set outside of validation block
+    gt: float | int = None
     # lt: float | int = None
     # ge: float | int = None
     # le: float | int = None

@@ -55,6 +55,10 @@ def test_default_values():
     )
     assert employee.elected_benefits is False
 
+    # default values only
+    boy = Boy()
+    assert boy.hobbies == ["Football"]
+
 
 # ### type hints ###
 def test_with_type_hints_list():
