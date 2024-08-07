@@ -65,3 +65,12 @@ class Teenager(BaseModel):
 
     age: Field(type=int, gt=9, lt=20)
     school_grade: Field(type=int, ge=5, le=12)
+
+
+class Foo(BaseModel):
+    bar: Field()
+
+
+class Profile(BaseModel):
+    nickname: Field(type=str, min_length=3, max_length=15, frozen=True)
+    PIN: Field(type=str, length=6)

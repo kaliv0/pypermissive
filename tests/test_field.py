@@ -1,7 +1,7 @@
 import typing
 import pytest
 
-from tests.conftest import Teenager
+from tests.conftest import Teenager, Foo, Profile
 
 
 def test_value_type():
@@ -14,6 +14,12 @@ def test_invalid_type():
     with pytest.raises(ValueError) as e:
         Teenager(name=1234)
     assert str(e.value) == "invalid value type for 'name', expected: '<class 'str'>'"
+
+
+def test_missing_value_type():
+    with pytest.raises(ValueError) as e:
+        Foo(bar=42)
+    assert str(e.value) == "missing value type"
 
 
 def test_default_value():
@@ -68,3 +74,43 @@ def test_invalid_le():
     with pytest.raises(ValueError) as e:
         Teenager(name="John Doe", age=19, school_grade=13)
     assert str(e.value) == "invalid value: expected '13'<='12'"
+
+
+def test_min_length():
+    profile = Profile(nickname="HIM")
+    assert profile.nickname == "HIM"
+
+
+def test_invalid_min_length():
+    with pytest.raises(ValueError) as e:
+        Profile(nickname="XY")
+    assert str(e.value) == "invalid value length '2': expected no less than '3' characters"
+
+
+def test_max_length():
+    profile = Profile(nickname="Rambhadracharya")
+    assert profile.nickname == "Rambhadracharya"
+
+
+def test_invalid_max_length():
+    with pytest.raises(ValueError) as e:
+        Profile(nickname="Rambhadracharyakurukshetraindrarashtra")
+    assert str(e.value) == "invalid value length '38': expected up to '15' characters"
+
+
+def test_length():
+    profile = Profile(nickname="Him", PIN="123456")
+    assert profile.PIN == "123456"
+
+
+def test_invalid_length():
+    with pytest.raises(ValueError) as e:
+        Profile(nickname="Sinbad", PIN="1234")
+    assert str(e.value) == "invalid value length '4': expected '6' characters"
+
+
+def test_frozen_field():
+    profile = Profile(nickname="Foo")
+    with pytest.raises(AttributeError) as e:
+        profile.nickname = "Bar"
+    assert str(e.value) == "field 'nickname' is readonly"

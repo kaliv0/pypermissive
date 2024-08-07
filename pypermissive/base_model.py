@@ -1,4 +1,3 @@
-# from pydantic import BaseModel
 import types
 import typing
 
@@ -47,10 +46,11 @@ class BaseModel:
             # field types
             if type(valid_attr_types.get(key, None)) is Field:
                 if expected_type.type is None:
-                    raise ValueError("missing value type'")
-
+                    raise ValueError("missing value type")
                 if type(value) is not expected_type.type:
                     raise ValueError(f"invalid value type for '{key}', expected: '{expected_type.type}'")
+
+                # validate numbers
                 # TODO: extract expected_type.gt etc
                 if expected_type.gt and not (value > expected_type.gt):
                     raise ValueError(f"invalid value: expected '{value}'>'{expected_type.gt}'")
@@ -64,8 +64,30 @@ class BaseModel:
                 if expected_type.le and not (value <= expected_type.le):
                     raise ValueError(f"invalid value: expected '{value}'<='{expected_type.le}'")
 
+                # validate strings
+                if expected_type.length and (len(value) != expected_type.length):
+                    # TODO: change error messages
+                    raise ValueError(
+                        f"invalid value length '{len(value)}': expected '{expected_type.length}' characters"
+                    )
+                elif expected_type.min_length and (len(value) < expected_type.min_length):
+                    raise ValueError(
+                        f"invalid value length '{len(value)}': expected no less than '{expected_type.min_length}' characters"
+                    )
+                elif expected_type.max_length and (len(value) > expected_type.max_length):
+                    raise ValueError(
+                        f"invalid value length '{len(value)}': expected up to '{expected_type.max_length}' characters"
+                    )
+
                 setattr(self, key, value)
                 continue
 
             # TODO: move error
             raise ValueError(f"invalid type: '{actual_type.__name__}', expected: '{expected_type.__name__}'")
+
+    ##############################################
+    def __setattr__(self, key, value):
+        attr_data = typing.get_type_hints(self)[key]
+        if type(attr_data) is Field and hasattr(self, key) and attr_data.frozen:
+            raise AttributeError(f"field '{key}' is readonly")
+        super().__setattr__(key, value)
