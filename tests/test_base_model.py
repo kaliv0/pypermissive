@@ -87,6 +87,12 @@ def test_invalid_type_hints_type():
     assert str(e.value) == "invalid type: 'list', expected: 'dict'"
 
 
+def test_invalid_type_hints_value_types_inside_dict():
+    with pytest.raises(ValueError) as e:
+        Book(characters={1: 1, 2: 2, 3: 3})
+    assert str(e.value) == "invalid value types inside dict: expected '(str, str)'"
+
+
 def test_invalid_type_hints_value_types():
     with pytest.raises(ValueError) as e:
         TonalMode(degrees=("I", "II", "III", "V", "VI"))
@@ -113,7 +119,7 @@ def test_invalid_union_types():
             department=8,
             elected_benefits=True,
         )
-    assert str(e.value) == "invalid type: 'int' not in (Department | str)"
+    assert str(e.value) == "invalid type: 'int' not in '(Department | str)'"
 
 
 # def test_optional():
@@ -135,9 +141,7 @@ def test_nested_classes():
 
 
 def test_nested_classes_union_type():
-    worker = Worker(
-        skill="Data Science", education=Education(name="PhD", field="AI", institution="MIT")
-    )
+    worker = Worker(skill="Data Science", education=Education(name="PhD", field="AI", institution="MIT"))
     assert worker.skill == "Data Science"
     assert worker.education.name == "PhD"
     assert worker.education.field == "AI"
