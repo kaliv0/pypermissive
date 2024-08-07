@@ -63,4 +63,5 @@ class Teenager(BaseModel):
         type=str,
     ) = "Jimmie"  # TODO: refactor
 
-    age: Field(type=int, gt=9)
+    age: Field(type=int, gt=9, lt=20)
+    school_grade: Field(type=int, ge=5, le=12)

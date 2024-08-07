@@ -44,6 +44,7 @@ class BaseModel:
                 union_message = " | ".join([arg.__name__ for arg in expected_type_args])
                 raise ValueError(f"invalid type: '{actual_type.__name__}' not in ({union_message})")
 
+            # field types
             if type(valid_attr_types.get(key, None)) is Field:
                 if expected_type.type is None:
                     raise ValueError("missing value type'")
@@ -52,9 +53,18 @@ class BaseModel:
                     raise ValueError(
                         f"invalid value type for '{key}', expected: '{expected_type.type}'"
                     )
-
+                # TODO: extract expected_type.gt etc
                 if expected_type.gt and not (value > expected_type.gt):
                     raise ValueError(f"invalid value: expected '{value}'>'{expected_type.gt}'")
+
+                if expected_type.lt and not (value < expected_type.lt):
+                    raise ValueError(f"invalid value: expected '{value}'<'{expected_type.lt}'")
+
+                if expected_type.ge and not (value >= expected_type.ge):
+                    raise ValueError(f"invalid value: expected '{value}'>='{expected_type.ge}'")
+
+                if expected_type.le and not (value <= expected_type.le):
+                    raise ValueError(f"invalid value: expected '{value}'<='{expected_type.le}'")
 
                 setattr(self, key, value)
                 continue
