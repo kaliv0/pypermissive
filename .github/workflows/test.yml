@@ -25,6 +25,6 @@ jobs:
     - name: Run lint
       run:  |
         poetry run ruff check --fix
-        poetry run ruff format
+        poetry run ruff format --line-length 115
     - name: Run tests
       run: poetry run pytest
