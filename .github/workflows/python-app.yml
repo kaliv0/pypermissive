@@ -1,0 +1,30 @@
+
+name: test  
+on:  
+  push:
+  pull_request:
+    branches:
+      - main
+jobs:  
+  build:  
+    runs-on: ubuntu-latest  
+    strategy:  
+      fail-fast: false  
+      matrix:  
+        python-version: ["3.12"]  
+    steps:  
+    - uses: actions/checkout@v4  
+    - name: Set up Python ${{ matrix.python-version }}  
+      uses: actions/setup-python@v4  
+      with:  
+        python-version: ${{ matrix.python-version }} 
+    - name: Install poetry
+      uses: abatilo/actions-poetry@v2
+    - name: Install project dependencies
+      run: poetry install --with dev
+    - name: Run lint
+      run:  |
+        poetry run ruff check --fix
+        poetry run ruff format
+    - name: Run tests
+      run: poetry run pytest
