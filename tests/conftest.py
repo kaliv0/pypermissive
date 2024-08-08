@@ -1,3 +1,4 @@
+import itertools
 import random
 from enum import Enum
 from typing import List
@@ -5,6 +6,7 @@ from uuid import UUID, uuid4
 
 # from pydantic import BaseModel
 from pypermissive.base_model import BaseModel
+from pypermissive.decorators import ComputedField, ComputedClassField
 from pypermissive.field import Field
 
 
@@ -59,7 +61,7 @@ class TonalMode(BaseModel):
     degrees: tuple[int]
 
 
-#########################
+# ### Fields ###
 class Teenager(BaseModel):
     name: Field(type=str, default="Jimmie")
 
@@ -91,3 +93,20 @@ class ShadyUser(BaseModel):
 
 class StrictUser(BaseModel):
     PIN: Field(type=str, field_validator=lambda x: x.isdigit())
+
+
+# ### ComputedFields ###
+class Thesis:
+    BAZZ = ["1", "2", "3"]
+
+    def __init__(self):
+        self.fizz = [1, 2, 3, 4, 5]
+        self.buzz = [6, 7, 8, 9]
+
+    @ComputedField
+    def foo(self):
+        return [val for val in itertools.product(self.fizz, self.buzz)]
+
+    @ComputedClassField
+    def bar(self):
+        return list(itertools.permutations(self.BAZZ))
