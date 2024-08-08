@@ -1,5 +1,7 @@
+import random
 from enum import Enum
 from typing import List
+from uuid import UUID, uuid4
 
 # from pydantic import BaseModel
 from pypermissive.base_model import BaseModel
@@ -77,3 +79,11 @@ class Profile(BaseModel):
     nickname: Field(type=str, min_length=3, max_length=15, frozen=True)
     PIN: Field(type=str, length=6)
     email: Field(type=str, pattern=r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+[.][a-zA-Z0-9-.]+$")
+
+
+class User(BaseModel):
+    id: Field(type=UUID, default_factory=uuid4)
+
+
+class ShadyUser(BaseModel):
+    id: Field(type=UUID, default_factory=random.random)

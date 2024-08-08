@@ -1,7 +1,9 @@
 import typing
+from uuid import UUID
+
 import pytest
 
-from tests.conftest import Teenager, Foo, Profile, Fizz
+from .conftest import Teenager, Foo, Profile, Fizz, User, ShadyUser
 
 
 def test_value_type():
@@ -13,7 +15,7 @@ def test_value_type():
 def test_invalid_type():
     with pytest.raises(ValueError) as e:
         Teenager(name=1234)
-    assert str(e.value) == "invalid value type for 'name', expected: '<class 'str'>'"
+    assert str(e.value) == "invalid value type for 'name', expected: 'str'"
 
 
 def test_missing_value_type():
@@ -31,7 +33,7 @@ def test_default_value():
 def test_invalid_default_value_type():
     with pytest.raises(TypeError) as e:
         Fizz()
-    assert str(e.value) == "invalid type for default 'buzz' value"
+    assert str(e.value) == "invalid type for default 'buzz' value: expected: 'int'"
 
 
 def test_gt():
@@ -134,3 +136,14 @@ def test_invalid_pattern():
         str(e.value)
         == "invalid value 'fat-joe82@gmail': does not match given pattern '^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+[.][a-zA-Z0-9-.]+$'"
     )
+
+
+def test_default_factory():
+    user = User()
+    assert type(user.id) is UUID
+
+
+def test_invalid_default_factory_result_type():
+    with pytest.raises(TypeError) as e:
+        ShadyUser()
+    assert str(e.value) == "invalid type for created 'id' value"

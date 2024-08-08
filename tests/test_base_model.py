@@ -1,6 +1,6 @@
 import pytest
 
-from tests.conftest import (
+from .conftest import (
     Department,
     Employee,
     Book,

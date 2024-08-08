@@ -1,11 +1,11 @@
-import typing
+from typing import Any, Callable
 from dataclasses import dataclass
 
 
 @dataclass  # or simple class with __slots__?
 class Field:
-    type: typing.Any = None  # rename to value_type -> required
-    default: typing.Any = None
+    type: Any = None  # rename to value_type
+    default: Any = None
     gt: float | int = None
     lt: float | int = None
     ge: float | int = None
@@ -14,5 +14,5 @@ class Field:
     max_length: int = None
     min_length: int = None
     pattern: str = None
-    # default_factory: Callable = None
+    default_factory: Callable = None
     frozen: bool = False

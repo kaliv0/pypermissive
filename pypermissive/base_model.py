@@ -2,7 +2,7 @@ import re
 import types
 import typing
 
-from pypermissive.field import Field
+from .field import Field
 
 
 class BaseModel:
@@ -49,7 +49,7 @@ class BaseModel:
                 if expected_type.type is None:
                     raise ValueError("missing value type")
                 if type(value) is not expected_type.type:
-                    raise ValueError(f"invalid value type for '{key}', expected: '{expected_type.type}'")
+                    raise ValueError(f"invalid value type for '{key}', expected: '{expected_type.type.__name__}'")
 
                 # validate numbers
                 # TODO: extract expected_type.gt etc
@@ -90,16 +90,27 @@ class BaseModel:
                 setattr(self, key, value)
                 continue
             else:
-                # TODO: move error
+                # TODO: __name__ may not work for e.g. int
                 raise ValueError(f"invalid type: '{actual_type.__name__}', expected: '{expected_type.__name__}'")
 
         # set default attributes for fields
         for key, value in valid_attr_types.items():
-            if (type(value) is Field) and (value.default is not None) and (hasattr(self, key) is False):
-                if type(value.default) is not value.type:
-                    # TODO: fix error message?
-                    raise TypeError(f"invalid type for default '{key}' value")
-                setattr(self, key, value.default)
+            if (type(value) is Field) and (hasattr(self, key) is False):
+                if value.default:
+                    if type(value.default) is not value.type:
+                        raise TypeError(
+                            f"invalid type for default '{key}' value: expected: '{value.type.__name__}'"
+                        )
+                    # TODO: add case if no value is set and default is missing -> give warning to user?
+                    setattr(self, key, value.default)
+                    continue
+
+                if value.default_factory:
+                    created_value = value.default_factory()
+                    if type(created_value) is not value.type:
+                        raise TypeError(f"invalid type for created '{key}' value")
+                    setattr(self, key, created_value)
+                    continue
 
     ##############################################
     def __setattr__(self, key, value):
