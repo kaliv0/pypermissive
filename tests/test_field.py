@@ -1,7 +1,7 @@
 import typing
 import pytest
 
-from tests.conftest import Teenager, Foo, Profile
+from tests.conftest import Teenager, Foo, Profile, Fizz
 
 
 def test_value_type():
@@ -26,6 +26,12 @@ def test_default_value():
     teen = Teenager()
     assert teen.name == "Jimmie"
     assert typing.get_type_hints(Teenager).get("name").type is str
+
+
+def test_invalid_default_value_type():
+    with pytest.raises(TypeError) as e:
+        Fizz()
+    assert str(e.value) == "invalid type for default 'buzz' value"
 
 
 def test_gt():

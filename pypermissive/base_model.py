@@ -81,9 +81,17 @@ class BaseModel:
 
                 setattr(self, key, value)
                 continue
+            else:
+                # TODO: move error
+                raise ValueError(f"invalid type: '{actual_type.__name__}', expected: '{expected_type.__name__}'")
 
-            # TODO: move error
-            raise ValueError(f"invalid type: '{actual_type.__name__}', expected: '{expected_type.__name__}'")
+        # set default attributes for fields
+        for key, value in valid_attr_types.items():
+            if (type(value) is Field) and (value.default is not None) and (hasattr(self, key) is False):
+                if type(value.default) is not value.type:
+                    # TODO: fix error message?
+                    raise TypeError(f"invalid type for default '{key}' value")
+                setattr(self, key, value.default)
 
     ##############################################
     def __setattr__(self, key, value):

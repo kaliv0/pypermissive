@@ -59,9 +59,7 @@ class TonalMode(BaseModel):
 
 #########################
 class Teenager(BaseModel):
-    name: Field(
-        type=str,
-    ) = "Jimmie"  # TODO: refactor
+    name: Field(type=str, default="Jimmie")
 
     age: Field(type=int, gt=9, lt=20)
     school_grade: Field(type=int, ge=5, le=12)
@@ -69,6 +67,10 @@ class Teenager(BaseModel):
 
 class Foo(BaseModel):
     bar: Field()
+
+
+class Fizz(BaseModel):
+    buzz: Field(type=int, default="bazz")
 
 
 class Profile(BaseModel):

@@ -5,7 +5,7 @@ from dataclasses import dataclass
 @dataclass  # or simple class with __slots__?
 class Field:
     type: typing.Any = None  # rename to value_type -> required
-    # default: typing.Any = None  # TODO: set outside of validation block
+    default: typing.Any = None
     gt: float | int = None
     lt: float | int = None
     ge: float | int = None
