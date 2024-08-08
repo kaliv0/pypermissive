@@ -120,3 +120,17 @@ def test_frozen_field():
     with pytest.raises(AttributeError) as e:
         profile.nickname = "Bar"
     assert str(e.value) == "field 'nickname' is readonly"
+
+
+def test_regex_pattern():
+    profile = Profile(nickname="Fat Joe", PIN="123456", email="fat-joe82@gmail.com")
+    assert profile.email == "fat-joe82@gmail.com"
+
+
+def test_invalid_pattern():
+    with pytest.raises(ValueError) as e:
+        Profile(nickname="Fat Joe", PIN="123456", email="fat-joe82@gmail")
+    assert (
+        str(e.value)
+        == "invalid value 'fat-joe82@gmail': does not match given pattern '^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+[.][a-zA-Z0-9-.]+$'"
+    )

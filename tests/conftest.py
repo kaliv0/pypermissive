@@ -76,3 +76,4 @@ class Fizz(BaseModel):
 class Profile(BaseModel):
     nickname: Field(type=str, min_length=3, max_length=15, frozen=True)
     PIN: Field(type=str, length=6)
+    email: Field(type=str, pattern=r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+[.][a-zA-Z0-9-.]+$")

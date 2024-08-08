@@ -1,3 +1,4 @@
+import re
 import types
 import typing
 
@@ -65,6 +66,7 @@ class BaseModel:
                     raise ValueError(f"invalid value: expected '{value}'<='{expected_type.le}'")
 
                 # validate strings
+                # length
                 if expected_type.length and (len(value) != expected_type.length):
                     # TODO: change error messages
                     raise ValueError(
@@ -77,6 +79,12 @@ class BaseModel:
                 elif expected_type.max_length and (len(value) > expected_type.max_length):
                     raise ValueError(
                         f"invalid value length '{len(value)}': expected up to '{expected_type.max_length}' characters"
+                    )
+
+                # pattern
+                if expected_type.pattern and re.match(expected_type.pattern, value) is None:
+                    raise ValueError(
+                        f"invalid value '{value}': does not match given pattern '{expected_type.pattern}'"
                     )
 
                 setattr(self, key, value)

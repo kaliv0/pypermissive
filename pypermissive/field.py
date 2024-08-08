@@ -13,6 +13,6 @@ class Field:
     length: int = None
     max_length: int = None
     min_length: int = None
-    # pattern: str = None
+    pattern: str = None
     # default_factory: Callable = None
     frozen: bool = False
