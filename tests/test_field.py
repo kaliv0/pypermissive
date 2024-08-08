@@ -3,7 +3,7 @@ from uuid import UUID
 
 import pytest
 
-from .conftest import Teenager, Foo, Profile, Fizz, User, ShadyUser
+from .conftest import Teenager, Foo, Profile, Fizz, User, ShadyUser, StrictUser
 
 
 def test_value_type():
@@ -147,3 +147,14 @@ def test_invalid_default_factory_result_type():
     with pytest.raises(TypeError) as e:
         ShadyUser()
     assert str(e.value) == "invalid type for created 'id' value"
+
+
+def test_field_validator():
+    user = StrictUser(PIN="123456")
+    assert user.PIN == "123456"
+
+
+def test_field_validator_invalid_value():
+    with pytest.raises(ValueError) as e:
+        StrictUser(PIN="123xxx")
+    assert str(e.value) == "invalid value '123xxx' for 'PIN'"

@@ -51,6 +51,13 @@ class BaseModel:
                 if type(value) is not expected_type.type:
                     raise ValueError(f"invalid value type for '{key}', expected: '{expected_type.type.__name__}'")
 
+                # user-defined validation
+                if expected_type.field_validator:
+                    if expected_type.field_validator(value) is False:
+                        raise ValueError(f"invalid value '{value}' for '{key}'")
+                    setattr(self, key, value)
+                    continue
+
                 # validate numbers
                 # TODO: extract expected_type.gt etc
                 if expected_type.gt and not (value > expected_type.gt):

@@ -87,3 +87,7 @@ class User(BaseModel):
 
 class ShadyUser(BaseModel):
     id: Field(type=UUID, default_factory=random.random)
+
+
+class StrictUser(BaseModel):
+    PIN: Field(type=str, field_validator=lambda x: x.isdigit())

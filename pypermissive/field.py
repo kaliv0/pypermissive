@@ -16,3 +16,4 @@ class Field:
     pattern: str = None
     default_factory: Callable = None
     frozen: bool = False
+    field_validator: Callable = None
