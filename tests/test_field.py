@@ -1,6 +1,5 @@
 import typing
 from uuid import UUID
-
 import pytest
 
 from .conftest import Teenager, Foo, Profile, Fizz, User, ShadyUser, StrictUser
@@ -13,13 +12,13 @@ def test_value_type():
 
 
 def test_invalid_type():
-    with pytest.raises(ValueError) as e:
+    with pytest.raises(TypeError) as e:
         Teenager(name=1234)
     assert str(e.value) == "invalid value type for 'name', expected: 'str'"
 
 
 def test_missing_value_type():
-    with pytest.raises(ValueError) as e:
+    with pytest.raises(TypeError) as e:
         Foo(bar=42)
     assert str(e.value) == "missing value type"
 

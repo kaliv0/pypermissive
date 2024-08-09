@@ -1,7 +1,1 @@
-- support Optional[str] and Union types that include None without default None value
-    -> if left off check if missing attribute is in expected
-        and of Optional or Union[...|None] type -> assign default None value
-
 - what if user gives both "gt" and "ge"?
-
-- NB: "invalid value type" should be TypeError -> replace

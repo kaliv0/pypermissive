@@ -4,10 +4,7 @@ from enum import Enum
 from typing import List
 from uuid import UUID, uuid4
 
-# from pydantic import BaseModel
-from pypermissive.base_model import BaseModel
-from pypermissive.decorators import ComputedField, ComputedClassField, validate_call
-from pypermissive.field import Field
+from pypermissive import BaseModel, Field, ComputedField, ComputedClassField, validate_call
 
 
 class Department(Enum):
@@ -41,12 +38,6 @@ class Skill(BaseModel):
 class Worker(BaseModel):
     education: Education
     skill: Skill | str
-
-
-# class Person(BaseModel):
-#     name: str
-#     # age: Optional[int]
-#     # age: Union[int, None]
 
 
 class Book(BaseModel):

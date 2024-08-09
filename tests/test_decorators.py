@@ -1,7 +1,7 @@
 import pytest
 
-from pypermissive.decorators import validate_call
-from tests.conftest import Thesis, some_func, TonalMode
+from pypermissive import validate_call
+from .conftest import Thesis, some_func, TonalMode
 
 
 def test_computed_field():

@@ -1,7 +1,3 @@
-# works only on instances
-import inspect
-
-
 class ComputedField:
     def __init__(self, func):
         self.__func = func
@@ -33,10 +29,9 @@ class ComputedClassField:
 
 
 # ### ###
-
-
 def validate_call(func):
     from functools import wraps
+    import inspect
 
     @wraps(func)
     def wrapper(*args, **kwargs):

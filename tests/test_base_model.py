@@ -29,7 +29,7 @@ def test_basic_validation():
 
 
 def test_invalid_type():
-    with pytest.raises(ValueError) as e:
+    with pytest.raises(TypeError) as e:
         Employee(
             employee_id="1",
             name="Foo Bar",
@@ -82,19 +82,19 @@ def test_type_hints_tuple():
 
 
 def test_invalid_type_hints_type():
-    with pytest.raises(ValueError) as e:
+    with pytest.raises(TypeError) as e:
         Book(characters=[1, 2, 3, 4])
     assert str(e.value) == "invalid type: 'list', expected: 'dict'"
 
 
 def test_invalid_type_hints_value_types_inside_dict():
-    with pytest.raises(ValueError) as e:
+    with pytest.raises(TypeError) as e:
         Book(characters={1: 1, 2: 2, 3: 3})
     assert str(e.value) == "invalid value types inside dict: expected '(str, str)'"
 
 
 def test_invalid_type_hints_value_types():
-    with pytest.raises(ValueError) as e:
+    with pytest.raises(TypeError) as e:
         TonalMode(degrees=("I", "II", "III", "V", "VI"))
     assert str(e.value) == "invalid value type: expected 'tuple[int]'"
 
@@ -111,7 +111,7 @@ def test_union_types():
 
 
 def test_invalid_union_types():
-    with pytest.raises(ValueError) as e:
+    with pytest.raises(TypeError) as e:
         Employee(
             employee_id=1,
             name="Foo Bar",
@@ -120,12 +120,6 @@ def test_invalid_union_types():
             elected_benefits=True,
         )
     assert str(e.value) == "invalid type: 'int' not in '(Department | str)'"
-
-
-# def test_optional():
-#     person = Person(name="John Doe")
-#     assert person.name == "John Doe"
-#     assert person.age is None
 
 
 # ### nested classes ###
@@ -149,6 +143,6 @@ def test_nested_classes_union_type():
 
 
 def test_nested_classes_invalid_type():
-    with pytest.raises(ValueError) as e:
+    with pytest.raises(TypeError) as e:
         Worker(skill="Data Science", education=42)
     assert str(e.value) == "invalid type: 'int', expected: 'Education'"

@@ -2,7 +2,7 @@ import re
 import types
 import typing
 
-from .field import Field
+from pypermissive import Field
 
 
 class BaseModel:
@@ -26,11 +26,11 @@ class BaseModel:
                 # validate dict[str, str]
                 if actual_type is dict and (tuple(type(v) for v in value) != expected_type_args):
                     dict_message = ", ".join([arg.__name__ for arg in expected_type_args])
-                    raise ValueError(f"invalid value types inside dict: expected '({dict_message})'")
+                    raise TypeError(f"invalid value types inside dict: expected '({dict_message})'")
 
                 # validate other collections
                 if any([type(v) is not expected_type_args[0] for v in value]):
-                    raise ValueError(f"invalid value type: expected '{expected_type}'")
+                    raise TypeError(f"invalid value type: expected '{expected_type}'")
 
                 setattr(self, key, value)
                 continue
@@ -39,7 +39,7 @@ class BaseModel:
             if expected_type_origin is types.UnionType:
                 if actual_type not in expected_type_args:
                     union_message = " | ".join([arg.__name__ for arg in expected_type_args])
-                    raise ValueError(f"invalid type: '{actual_type.__name__}' not in '({union_message})'")
+                    raise TypeError(f"invalid type: '{actual_type.__name__}' not in '({union_message})'")
 
                 setattr(self, key, value)
                 continue
@@ -47,9 +47,9 @@ class BaseModel:
             # field types
             if type(valid_attr_types.get(key, None)) is Field:
                 if expected_type.type is None:
-                    raise ValueError("missing value type")
+                    raise TypeError("missing value type")  # TODO: TypeError?
                 if type(value) is not expected_type.type:
-                    raise ValueError(f"invalid value type for '{key}', expected: '{expected_type.type.__name__}'")
+                    raise TypeError(f"invalid value type for '{key}', expected: '{expected_type.type.__name__}'")
 
                 # user-defined validation
                 if expected_type.field_validator:
@@ -97,8 +97,7 @@ class BaseModel:
                 setattr(self, key, value)
                 continue
             else:
-                # TODO: __name__ may not work for e.g. int
-                raise ValueError(f"invalid type: '{actual_type.__name__}', expected: '{expected_type.__name__}'")
+                raise TypeError(f"invalid type: '{actual_type.__name__}', expected: '{expected_type.__name__}'")
 
         # set default attributes for fields
         for key, value in valid_attr_types.items():
