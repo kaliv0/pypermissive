@@ -1,9 +1,10 @@
 [tool.poetry]
 name = "pypermissive"
-version = "0.1.0"
-description = ""
+version = "1.0.0"
+description = "Validation library"
 authors = ["kaliv0 <kaloyan.ivanov88@gmail.com>"]
 readme = "README.md"
+license = "LICENSE"
 
 [tool.poetry.dependencies]
 python = "^3.12"
