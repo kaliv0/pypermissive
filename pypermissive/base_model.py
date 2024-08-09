@@ -90,7 +90,6 @@ class BaseModel:
 
     @staticmethod
     def _validate_number(value, expected_type):
-        # TODO: put ge/le before gt/lt ?
         if expected_type.gt and not (value > expected_type.gt):
             raise ValueError(f"invalid value: expected '{value}'>'{expected_type.gt}'")
         if expected_type.lt and not (value < expected_type.lt):

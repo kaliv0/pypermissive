@@ -1,3 +1,9 @@
+<p align="center">
+  <img src="https://github.com/kaliv0/pypermissive/blob/main/permissive.jpg?raw=true" alt="Permissive Path">
+</p>
+
+---
+
 # PyPermissive
 
 [![tests](https://img.shields.io/github/actions/workflow/status/kaliv0/pypermissive/ci.yml)](https://github.com/kaliv0/pypermissive/actions/workflows/ci.yml)

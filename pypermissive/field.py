@@ -2,18 +2,18 @@ from typing import Any, Callable
 from dataclasses import dataclass
 
 
-@dataclass  # or simple class with __slots__?
+@dataclass
 class Field:
-    type: Any = None  # rename to value_type
+    type: Any = None
     default: Any = None
-    gt: float | int = None
-    lt: float | int = None
-    ge: float | int = None
-    le: float | int = None
-    length: int = None
-    max_length: int = None
-    min_length: int = None
-    pattern: str = None
-    default_factory: Callable = None
-    frozen: bool = False
-    field_validator: Callable = None
+    frozen: bool | None = False
+    gt: float | int | None = None
+    lt: float | int | None = None
+    ge: float | int | None = None
+    le: float | int | None = None
+    length: int | None = None
+    max_length: int | None = None
+    min_length: int | None = None
+    pattern: str | None = None
+    default_factory: Callable[..., Any] | None = None
+    field_validator: Callable[..., bool] | None = None
