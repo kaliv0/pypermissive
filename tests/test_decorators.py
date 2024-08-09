@@ -1,4 +1,7 @@
-from tests.conftest import Thesis
+import pytest
+
+from pypermissive.decorators import validate_call
+from tests.conftest import Thesis, some_func, TonalMode
 
 
 def test_computed_field():
@@ -52,3 +55,32 @@ def test_computed_class_field_called_from_instance():
         ("3", "1", "2"),
         ("3", "2", "1"),
     ]
+
+
+# ### validate_function_calls ###
+def test_validate_call():
+    mode = TonalMode(degrees=(1, 2, 3, 5, 6))
+    assert some_func("_", 2, mode) == "1__2__3__5__6"
+
+
+def test_validate_call_invalid_type():
+    mode = TonalMode(degrees=(1, 2, 3, 5, 6))
+    with pytest.raises(TypeError) as e:
+        some_func("*", "2", mode)
+    assert str(e.value) == "invalid value type for parameter 'count': expected 'int'"
+
+
+def test_validate_call_invalid_field_type():
+    with pytest.raises(TypeError) as e:
+        some_func("*", 2, [1, 2, 3, 4])
+    assert str(e.value) == "invalid value type for parameter 'mode': expected 'TonalMode'"
+
+
+def test_validate_call_invalid_return_type():
+    @validate_call
+    def foo(x: str, y: str) -> int:
+        return x + y
+
+    with pytest.raises(TypeError) as e:
+        foo("42", "xxx")
+    assert str(e.value) == "invalid return type: expected 'int'"

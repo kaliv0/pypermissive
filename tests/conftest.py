@@ -6,7 +6,7 @@ from uuid import UUID, uuid4
 
 # from pydantic import BaseModel
 from pypermissive.base_model import BaseModel
-from pypermissive.decorators import ComputedField, ComputedClassField
+from pypermissive.decorators import ComputedField, ComputedClassField, validate_call
 from pypermissive.field import Field
 
 
@@ -110,3 +110,9 @@ class Thesis:
     @ComputedClassField
     def bar(self):
         return list(itertools.permutations(self.BAZZ))
+
+
+# ### validate_call ###
+@validate_call
+def some_func(delimiter: str, count: int, mode: TonalMode) -> str:
+    return (delimiter * count).join([str(d) for d in mode.degrees])

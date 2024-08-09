@@ -2,17 +2,6 @@
     -> if left off check if missing attribute is in expected
         and of Optional or Union[...|None] type -> assign default None value
 
-- regex validation for strings -> support flags?
-- passing user-defined function for validating particular field (decorators like in Java)
-
 - what if user gives both "gt" and "ge"?
 
----------------------------
-
-fields:
-- default (value)?
-- (regex) pattern
-- max_digits, decimal_places (for float)???
-- kw_only, init (bool -> include var in __init__)
-- @computed_field -> @LazyProperty
-- default_factory -> e.g. UUID
+- NB: "invalid value type" should be TypeError -> replace
