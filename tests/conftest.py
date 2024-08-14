@@ -55,7 +55,6 @@ class TonalMode(BaseModel):
 # ### Fields ###
 class Teenager(BaseModel):
     name: Field(type=str, default="Jimmie")
-
     age: Field(type=int, gt=9, lt=20)
     school_grade: Field(type=int, ge=5, le=12)
 
