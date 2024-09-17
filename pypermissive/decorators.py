@@ -1,26 +1,22 @@
-class ComputedField:
-    def __init__(self, func):
-        self.__func = func
-        self.__name__ = func.__name__
-
-    def __get__(self, instance, owner):
-        if instance is None:
-            return None
-        result = self.__func(instance)
-        setattr(instance, self.__name__, result)
-        return result
-
-
 class ComputedClassField:
     def __init__(self, func):
-        self.__func = func
+        self._func = func
         self.__name__ = func.__name__
 
     def __get__(self, instance, owner):
         if owner is None:
             return None
-        result = self.__func(owner)
+        result = self._func(owner)
         setattr(owner, self.__name__, result)
+        return result
+
+
+class ComputedField(ComputedClassField):
+    def __get__(self, instance, owner):
+        if instance is None:
+            return None
+        result = self._func(instance)
+        setattr(instance, self.__name__, result)
         return result
 
 

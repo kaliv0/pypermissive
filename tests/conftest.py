@@ -1,7 +1,6 @@
 import itertools
 import random
 from enum import Enum
-from typing import List
 from uuid import UUID, uuid4
 
 from pypermissive import BaseModel, Field, ComputedField, ComputedClassField, validate_call
@@ -22,7 +21,7 @@ class Employee(BaseModel):
 
 
 class Boy(BaseModel):
-    hobbies: List[str] = ["Football"]
+    hobbies: list[str] = ["Football"]
 
 
 class Education(BaseModel):
