@@ -23,6 +23,7 @@ jobs:
     - name: Install project dependencies
       run: poetry install --with dev
     - name: Run lint
+      # line-length 110 or 100?
       run:  |
         poetry run ruff check --fix
         poetry run ruff format --line-length 115

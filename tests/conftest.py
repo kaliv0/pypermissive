@@ -4,6 +4,7 @@ from enum import Enum
 from uuid import UUID, uuid4
 
 from pypermissive import BaseModel, Field, ComputedField, ComputedClassField, validate_call
+from pypermissive.decorators import Interface
 
 
 class Department(Enum):
@@ -105,3 +106,48 @@ class Thesis:
 @validate_call
 def some_func(delimiter: str, count: int, mode: TonalMode) -> str:
     return (delimiter * count).join([str(d) for d in mode.degrees])
+
+
+# ### interfaces ###
+class MyInterface:
+    def bar(self): ...
+
+
+@Interface(MyInterface)
+class Barsome:
+    def bar(self): ...
+
+
+# single inheritance
+class Parent:
+    def abs(self): ...
+
+
+@Interface(MyInterface)
+class Child(Parent):
+    def bar(self): ...
+
+
+# multiple inheritance
+class Woman:
+    def fizz(self): ...
+
+
+class Girl:
+    def buzz(self): ...
+
+
+@Interface(MyInterface)
+class GrandDaughter(Woman, Girl):
+    def bar(self): ...
+
+
+# multiple interfaces
+class OtherInterface:
+    def moo(self): ...
+
+
+@Interface(MyInterface, OtherInterface)
+class Frankenstein:
+    def bar(self): ...
+    def moo(self): ...

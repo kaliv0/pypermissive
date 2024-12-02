@@ -1,3 +1,6 @@
+import inspect  # TODO: top level?
+
+
 class ComputedClassField:
     def __init__(self, func):
         self._func = func
@@ -23,7 +26,6 @@ class ComputedField(ComputedClassField):
 ##############################################
 def validate_call(func):
     from functools import wraps
-    import inspect
 
     @wraps(func)
     def wrapper(*args, **kwargs):
@@ -40,3 +42,49 @@ def validate_call(func):
         return result
 
     return wrapper
+
+
+##############################################
+class InterfaceError(Exception):
+    pass
+
+
+# TODO:
+#  Support dunder methods??
+#  Enforce method signatures
+#  Require interface methods to be empty/abstract/pass-only
+
+
+class Interface:
+    def __init__(self, *klass):
+        self.required_methods = self.get_methods(*klass)
+
+    # TODO: fails at class-definition level long before any instantiation
+    def __call__(self, klass):
+        missing_methods = [func for func in self.required_methods if func not in self.get_methods(klass)]
+        if missing_methods:
+            raise InterfaceError(f"Missing required methods: '{', '.join(func for func in missing_methods)}'")
+
+        class DuckType(*klass.__bases__):
+            def __init__(self, *args, **kwargs) -> None:
+                self._origin = klass(*args, **kwargs)
+
+            def __getattribute__(self, attr):
+                try:
+                    return super().__getattribute__(attr)
+                except AttributeError:
+                    return self._origin.__getattribute__(attr)
+
+        return DuckType
+
+    @staticmethod
+    def get_methods(*klass):
+        # TODO: extracting only function names for now
+        return [
+            func[0]
+            for kl in klass
+            for func in inspect.getmembers(kl, inspect.isfunction)
+            if not func[0].startswith("__")
+        ]
+
+    # TODO: NB: if you put decorator on a parent and same decorator on a child that inherits from the parent you get an error

@@ -5,12 +5,12 @@ description = "Validation library"
 authors = ["kaliv0 <kaloyan.ivanov88@gmail.com>"]
 readme = "README.md"
 license = "LICENSE"
+# TODO: add keywords, repo url, include main src only in build, change version
 
 [tool.poetry.dependencies]
 python = "^3.12"
 
 [tool.poetry.group.dev.dependencies]
-twine = "^5.1.1"
 ruff = "^0.5.5"
 pytest = "^8.3.2"
 
