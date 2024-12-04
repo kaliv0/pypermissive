@@ -14,6 +14,8 @@ from .conftest import (
     GrandDaughter,
     Woman,
     Frankenstein,
+    SimpleSignature,
+    ClassWithSignature,
 )
 from .util import not_raises
 
@@ -104,7 +106,7 @@ def test_validate_call_invalid_return_type():
 def test_interface():
     with not_raises(InterfaceError):
         b = Barsome()
-    b.bar()  # TODO: assert
+    assert b.bar() == "Barsome:bar"
 
 
 def test_interface_raises():
@@ -121,6 +123,7 @@ def test_interface_correct_type():
     assert isinstance(bar, MyInterface) is False
     assert type(bar) is Barsome  # TODO: ??
     assert type(bar) is not MyInterface
+    assert bar.bar() == "Barsome:bar"
 
 
 def test_interface_inheritance():
@@ -128,6 +131,8 @@ def test_interface_inheritance():
     assert isinstance(concrete, Child)
     assert isinstance(concrete, Parent)
     assert not isinstance(concrete, MyInterface)
+    assert concrete.abs() == "abs: 1"  # TODO: fix
+    assert concrete.bar() == "bar: 2"
 
     assert issubclass(Child, Parent)
     assert not issubclass(Child, MyInterface)
@@ -144,14 +149,43 @@ def test_interface_multiple_inheritance():
     assert issubclass(GrandDaughter, Girl)
     assert not issubclass(Girl, MyInterface)
     assert type(Girl) is not MyInterface
-    # TODO: test actual methods
-    # joujou.fizz()
-    # joujou.buzz()
-    # joujou.bar()
+    assert joujou.fizz() == "fizz: 1"  # TODO: fix -> class_name lost in inheritance
+    assert joujou.buzz() == "buzz: 2"
+    assert joujou.bar() == "bar: 1, 2, 3"  # TODO: but kept for interface
 
 
 def test_stacking_interfaces():
     with not_raises(InterfaceError):
         f = Frankenstein()
-    f.bar()  # TODO: not showing by the LSP
-    f.moo()
+    assert f.bar() == "Frankenstein:bar"
+    assert f.moo() == "Frankenstein:moo"
+
+
+def test_interface_signature():
+    with not_raises(InterfaceError):
+        c = ClassWithSignature()
+    assert c.abc(1, 2) == 3
+
+
+def test_interface_invalid_signature():
+    with pytest.raises(InterfaceError, match="Methods with invalid signature: 'abc'"):
+
+        @Interface(SimpleSignature)
+        class ClassWithNoSignature:
+            def abc(self):
+                return 42
+
+
+def test_get_set_attr_override():  # TODO: fix name of test
+    f = Frankenstein(8)
+    assert f.val == 8
+
+    f.other = "foo"
+    assert f.other == "foo"
+
+    f.val = 9
+    assert f.val == 9
+
+    # raise Exception(f.__dict__, f._origin.__dict__)
+    # TODO: first time val is attached to _origin, when re-set -> attached to DuckType wrapper
+    #  Exception: ({'_origin': <tests.conftest.Frankenstein object at 0x7bc96dd216a0>, 'other': 'foo', 'val': 9}, {'val': 8})

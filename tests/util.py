@@ -7,6 +7,5 @@ ERROR_MSG = "{error} raised unexpectedly!"
 def not_raises(ExpectedException):
     try:
         yield
-
     except (ExpectedException, Exception) as error:
         raise AssertionError(ERROR_MSG.format(error=str(error)))

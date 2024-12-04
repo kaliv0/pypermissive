@@ -115,31 +115,48 @@ class MyInterface:
 
 @Interface(MyInterface)
 class Barsome:
-    def bar(self): ...
+    # TODO: could be static
+    def bar(self):
+        return f"{self.__class__.__name__}:bar"
 
 
 # single inheritance
 class Parent:
-    def abs(self): ...
+    val = 1
+
+    def abs(self):
+        return f"abs: {self.val}"
 
 
 @Interface(MyInterface)
 class Child(Parent):
-    def bar(self): ...
+    var = 2
+
+    def bar(self):
+        return f"bar: {self.var}"
 
 
 # multiple inheritance
 class Woman:
-    def fizz(self): ...
+    const = 1
+
+    def fizz(self):
+        return f"fizz: {self.const}"
 
 
 class Girl:
-    def buzz(self): ...
+    val = 2
+
+    def buzz(self):
+        return f"buzz: {self.val}"
 
 
 @Interface(MyInterface)
 class GrandDaughter(Woman, Girl):
-    def bar(self): ...
+    var = 3
+
+    def bar(self):
+        return f"bar: {self.const}, {self.val}, {self.var}"
 
 
 # multiple interfaces
@@ -149,5 +166,24 @@ class OtherInterface:
 
 @Interface(MyInterface, OtherInterface)
 class Frankenstein:
-    def bar(self): ...
-    def moo(self): ...
+    def __init__(self, val=None):
+        self.val = val
+
+    def bar(self):
+        return f"{self.__class__.__name__}:bar"
+
+    def moo(self):
+        return f"{self.__class__.__name__}:moo"
+
+
+# interface signature
+class SimpleSignature:
+    @staticmethod
+    def abc(x: int, y: int) -> int: ...
+
+
+@Interface(SimpleSignature)
+class ClassWithSignature:
+    @staticmethod
+    def abc(x: int, y: int) -> int:
+        return x + y
