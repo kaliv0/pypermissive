@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://github.com/kaliv0/pypermissive/blob/main/permissive.jpg?raw=true" alt="Permissive Path">
+  <img src="https://github.com/kaliv0/pypermissive/blob/main/assets/permissive.jpg?raw=true" alt="Permissive Path">
 </p>
 
 ---
@@ -93,7 +93,7 @@ def some_func(delimiter: str, count: int, numbers: list[int]) -> str:
 @Interface checks on a class-definition level if the decorated class implements all described methods with the specified signature
 ```python
 class MyInterface:
-    def pow(self): ...
+    def pow(self, x: int, y: int) -> int: ...
 
 
 @Interface(MyInterface)
