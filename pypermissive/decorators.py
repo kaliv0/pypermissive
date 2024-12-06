@@ -1,3 +1,7 @@
+import inspect
+from functools import wraps
+
+
 class ComputedClassField:
     def __init__(self, func):
         self._func = func
@@ -22,9 +26,6 @@ class ComputedField(ComputedClassField):
 
 ##############################################
 def validate_call(func):
-    from functools import wraps
-    import inspect
-
     @wraps(func)
     def wrapper(*args, **kwargs):
         signature_args = inspect.get_annotations(func)
@@ -40,3 +41,43 @@ def validate_call(func):
         return result
 
     return wrapper
+
+
+##############################################
+class InterfaceError(Exception):
+    pass
+
+
+class Interface:
+    def __init__(self, *klass):
+        self.required_methods = self._get_methods(*klass)
+
+    # fails at class-definition level
+    def __call__(self, klass):
+        missing_methods = []
+        invalid_signature_methods = []
+        klass_methods = self._get_methods(klass)
+        for name, func in self.required_methods.items():
+            if name not in klass_methods.keys():
+                missing_methods.append(name)
+            if not (curr_method := klass_methods.get(name, None)) or inspect.signature(func) != inspect.signature(
+                curr_method
+            ):
+                invalid_signature_methods.append(name)
+
+        if missing_methods:
+            raise InterfaceError(f"Missing required methods: '{', '.join(name for name in missing_methods)}'")
+        if invalid_signature_methods:
+            raise InterfaceError(
+                f"Methods with invalid signature: '{', '.join(name for name in invalid_signature_methods)}'"
+            )
+        return klass
+
+    @staticmethod
+    def _get_methods(*klass):
+        return {
+            func[0]: func[1]
+            for kl in klass
+            for func in inspect.getmembers(kl, inspect.isfunction)
+            if not func[0].startswith("_")
+        }

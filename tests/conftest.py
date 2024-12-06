@@ -4,6 +4,7 @@ from enum import Enum
 from uuid import UUID, uuid4
 
 from pypermissive import BaseModel, Field, ComputedField, ComputedClassField, validate_call
+from pypermissive.decorators import Interface
 
 
 class Department(Enum):
@@ -105,3 +106,84 @@ class Thesis:
 @validate_call
 def some_func(delimiter: str, count: int, mode: TonalMode) -> str:
     return (delimiter * count).join([str(d) for d in mode.degrees])
+
+
+# ### interfaces ###
+class MyInterface:
+    def bar(self): ...
+
+
+@Interface(MyInterface)
+class Barsome:
+    def bar(self):
+        return f"{self.__class__.__name__}:bar"
+
+
+# single inheritance
+class Parent:
+    val = 1
+
+    def abs(self):
+        return f"{self.__class__.__name__}:abs-> {self.val}"
+
+
+@Interface(MyInterface)
+class Child(Parent):
+    def bar(self):
+        return f"{self.__class__.__name__}:bar"
+
+
+# multiple inheritance
+class Woman:
+    const = 1
+
+    def fizz(self):
+        return f"{self.__class__.__name__}:fizz-> {self.const}"
+
+
+class Girl:
+    val = 2
+
+    def buzz(self):
+        return f"{self.__class__.__name__}:buzz-> {self.val}"
+
+
+@Interface(MyInterface)
+class GrandDaughter(Woman, Girl):
+    var = 3
+
+    def total(self):
+        return f"{self.__class__.__name__}:total-> {self.const}, {self.val}, {self.var}"
+
+    def bar(self):
+        return f"{self.__class__.__name__}:bar"
+
+
+# multiple interfaces
+class OtherInterface:
+    def moo(self): ...
+
+
+@Interface(MyInterface, OtherInterface)
+class Frankenstein:
+    def __init__(self, val=None):
+        self.val = val
+
+    def bar(self):
+        return f"{self.__class__.__name__}:bar"
+
+    def moo(self):
+        return f"{self.__class__.__name__}:moo"
+
+
+# interface signature
+class SimpleSignature:
+    @staticmethod
+    def abc(x: int, y: int) -> int: ...
+
+
+@Interface(SimpleSignature)
+class ClassWithSignature:
+    @staticmethod
+    def abc(x: int, y: int) -> int:
+        return x + y
