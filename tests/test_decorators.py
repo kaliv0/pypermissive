@@ -1,7 +1,6 @@
 import pytest
 
-from pypermissive import validate_call
-from pypermissive.decorators import InterfaceError, Interface
+from pypermissive.decorators import validate_call, Interface, InterfaceError
 from .conftest import (
     Thesis,
     TonalMode,
@@ -120,8 +119,8 @@ def test_interface_raises():
 def test_interface_correct_type():
     bar = Barsome()
     assert isinstance(bar, Barsome)
-    assert isinstance(bar, MyInterface) is False
-    assert type(bar) is Barsome  # TODO: ??
+    assert not isinstance(bar, MyInterface)
+    assert type(bar) is Barsome
     assert type(bar) is not MyInterface
     assert bar.bar() == "Barsome:bar"
 
@@ -131,15 +130,15 @@ def test_interface_inheritance():
     assert isinstance(concrete, Child)
     assert isinstance(concrete, Parent)
     assert not isinstance(concrete, MyInterface)
-    assert concrete.abs() == "abs: 1"  # TODO: fix
-    assert concrete.bar() == "bar: 2"
+    assert concrete.abs() == "Child:abs-> 1"
+    assert concrete.bar() == "Child:bar"
 
     assert issubclass(Child, Parent)
     assert not issubclass(Child, MyInterface)
     assert type(Child) is not MyInterface
 
 
-def test_interface_multiple_inheritance():
+def test_interface_multilevel_inheritance():
     joujou = GrandDaughter()
     assert isinstance(joujou, GrandDaughter)
     assert isinstance(joujou, Girl)
@@ -149,12 +148,13 @@ def test_interface_multiple_inheritance():
     assert issubclass(GrandDaughter, Girl)
     assert not issubclass(Girl, MyInterface)
     assert type(Girl) is not MyInterface
-    assert joujou.fizz() == "fizz: 1"  # TODO: fix -> class_name lost in inheritance
-    assert joujou.buzz() == "buzz: 2"
-    assert joujou.bar() == "bar: 1, 2, 3"  # TODO: but kept for interface
+    assert joujou.fizz() == "GrandDaughter:fizz-> 1"
+    assert joujou.buzz() == "GrandDaughter:buzz-> 2"
+    assert joujou.total() == "GrandDaughter:total-> 1, 2, 3"
+    assert joujou.bar() == "GrandDaughter:bar"
 
 
-def test_stacking_interfaces():
+def test_multiple_interfaces():
     with not_raises(InterfaceError):
         f = Frankenstein()
     assert f.bar() == "Frankenstein:bar"
@@ -174,18 +174,3 @@ def test_interface_invalid_signature():
         class ClassWithNoSignature:
             def abc(self):
                 return 42
-
-
-def test_get_set_attr_override():  # TODO: fix name of test
-    f = Frankenstein(8)
-    assert f.val == 8
-
-    f.other = "foo"
-    assert f.other == "foo"
-
-    f.val = 9
-    assert f.val == 9
-
-    # raise Exception(f.__dict__, f._origin.__dict__)
-    # TODO: first time val is attached to _origin, when re-set -> attached to DuckType wrapper
-    #  Exception: ({'_origin': <tests.conftest.Frankenstein object at 0x7bc96dd216a0>, 'other': 'foo', 'val': 9}, {'val': 8})

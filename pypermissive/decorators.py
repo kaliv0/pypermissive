@@ -1,4 +1,5 @@
-import inspect  # TODO: top level?
+import inspect
+from functools import wraps
 
 
 class ComputedClassField:
@@ -25,8 +26,6 @@ class ComputedField(ComputedClassField):
 
 ##############################################
 def validate_call(func):
-    from functools import wraps
-
     @wraps(func)
     def wrapper(*args, **kwargs):
         signature_args = inspect.get_annotations(func)
@@ -49,20 +48,15 @@ class InterfaceError(Exception):
     pass
 
 
-# TODO:
-#  Enforce method signatures -> more tests, check subtypes
-#  Require interface methods to be empty/abstract/pass-only
-
-
 class Interface:
     def __init__(self, *klass):
-        self.required_methods = self.get_methods(*klass)
+        self.required_methods = self._get_methods(*klass)
 
-    # NB: fails at class-definition level
+    # fails at class-definition level
     def __call__(self, klass):
         missing_methods = []
         invalid_signature_methods = []
-        klass_methods = self.get_methods(klass)
+        klass_methods = self._get_methods(klass)
         for name, func in self.required_methods.items():
             if name not in klass_methods.keys():
                 missing_methods.append(name)
@@ -77,41 +71,13 @@ class Interface:
             raise InterfaceError(
                 f"Methods with invalid signature: '{', '.join(name for name in invalid_signature_methods)}'"
             )
-
-        class DuckType(*klass.__bases__):
-            def __init__(self, *args, **kwargs) -> None:
-                self._origin = klass(*args, **kwargs)
-
-            # TODO: getattribute or getattr?
-            def __getattribute__(self, attr):
-                try:
-                    return super().__getattribute__(attr)
-                except AttributeError:
-                    return self._origin.__getattribute__(attr)
-
-            # TODO: refactor
-            def __setattr__(self, attr, value):
-                try:
-                    return super().__setattr__(attr, value)
-                except AttributeError:
-                    return self._origin.__setattr__(attr, value)
-
-            # TODO: can we doo any magic with repr, str etc to keep the original class name (when using inheritance)?
-            def __repr__(self):
-                return self._origin.__repr__()
-
-            def __str__(self):
-                return self._origin.__str__()  # TODO: do we need this?
-
-        return DuckType
+        return klass
 
     @staticmethod
-    def get_methods(*klass):
+    def _get_methods(*klass):
         return {
             func[0]: func[1]
             for kl in klass
             for func in inspect.getmembers(kl, inspect.isfunction)
-            if not func[0].startswith("_")  # TODO: support public methods only (?)
+            if not func[0].startswith("_")
         }
-
-    # TODO: NB: if you put decorator on a parent and same decorator on a child that inherits from the parent you get an error

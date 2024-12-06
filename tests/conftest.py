@@ -115,7 +115,6 @@ class MyInterface:
 
 @Interface(MyInterface)
 class Barsome:
-    # TODO: could be static
     def bar(self):
         return f"{self.__class__.__name__}:bar"
 
@@ -125,15 +124,13 @@ class Parent:
     val = 1
 
     def abs(self):
-        return f"abs: {self.val}"
+        return f"{self.__class__.__name__}:abs-> {self.val}"
 
 
 @Interface(MyInterface)
 class Child(Parent):
-    var = 2
-
     def bar(self):
-        return f"bar: {self.var}"
+        return f"{self.__class__.__name__}:bar"
 
 
 # multiple inheritance
@@ -141,22 +138,25 @@ class Woman:
     const = 1
 
     def fizz(self):
-        return f"fizz: {self.const}"
+        return f"{self.__class__.__name__}:fizz-> {self.const}"
 
 
 class Girl:
     val = 2
 
     def buzz(self):
-        return f"buzz: {self.val}"
+        return f"{self.__class__.__name__}:buzz-> {self.val}"
 
 
 @Interface(MyInterface)
 class GrandDaughter(Woman, Girl):
     var = 3
 
+    def total(self):
+        return f"{self.__class__.__name__}:total-> {self.const}, {self.val}, {self.var}"
+
     def bar(self):
-        return f"bar: {self.const}, {self.val}, {self.var}"
+        return f"{self.__class__.__name__}:bar"
 
 
 # multiple interfaces

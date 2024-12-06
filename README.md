@@ -14,6 +14,7 @@
 
 Validation library in Python, modeled after Pydantic
 
+--------------------------------
 ## Example
 
 Inherit from BaseModel and describe required types.<br>
@@ -32,7 +33,6 @@ employee = Employee(
     elected_benefits=True,
 )
 ```
-
 collections:
 ```python
 class Book(BaseModel):
@@ -44,10 +44,10 @@ book = Book(
     chapters=["Beginning", "Middle", "End"]
 )
 ```
-
 unions, classes and fields.<br>
-<br>Fields are similar to <i>pydantic</i> with one caveat: you need to give value type explicitly:
 
+--------------------------------
+Fields are similar to <i>pydantic</i> with one caveat: you need to give value type explicitly:
 ```python
 class User(BaseModel):
     name: Field(type=str, default="Jimmie", frozen=True)
@@ -59,6 +59,7 @@ class User(BaseModel):
 
 ```
 
+--------------------------------
 You can also use decorators:<br>
 @ComputedField (invoke only from instances) and @ComputedClassField (invoke both on class and instance level)
 ```python
@@ -80,9 +81,37 @@ class Thesis:
     
 ```
 
+--------------------------------
 The library supports @validate_call that checks both argument and return types:
 ```python
 @validate_call
 def some_func(delimiter: str, count: int, numbers: list[int]) -> str:
     return (delimiter * count).join([str(d) for d in numbers])
+```
+
+--------------------------------
+@Interface checks on a class-definition level if the decorated class implements all described methods with the specified signature
+```python
+class MyInterface:
+    def pow(self): ...
+
+
+@Interface(MyInterface)
+class Powerful:
+    def pow(self, x: int, y: int) -> int:
+        return x ** y
+```
+
+```python
+class OtherInterface:
+    def moo(self): ...
+
+
+@Interface(MyInterface, OtherInterface)
+class Frankenstein:
+    def pow(self, x: int, y: int) -> int:
+        return x ** y
+
+    def moo(self):
+        return "Yeah Mr. White..."
 ```
