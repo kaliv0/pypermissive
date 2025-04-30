@@ -6,6 +6,7 @@ class ComputedClassField:
     def __init__(self, func):
         self._func = func
         self.__name__ = func.__name__
+        self.__doc__ = func.__doc__
 
     def __get__(self, instance, owner):
         if owner is None:
@@ -19,8 +20,7 @@ class ComputedField(ComputedClassField):
     def __get__(self, instance, owner):
         if instance is None:
             return None
-        result = self._func(instance)
-        setattr(instance, self.__name__, result)
+        result = instance.__dict__[self.__name__] = self._func(instance)
         return result
 
 
